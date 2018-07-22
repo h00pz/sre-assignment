@@ -1,40 +1,40 @@
 
 ---
-# - name: Provision Postgres VM
-#   local_action:
-#     module: ec2
-#     aws_access_key:   "{{ aws_access_key }}"
-#     aws_secret_key:   "{{ aws_secret_key }}"
-#     key_name: "{{ aws_ssh_key_name }}"
-#     group_id: "['{{ postgres_sec_group }}', '{{ zabbix_sec_group }}', '{{ mgmt_sec_group }}']"
-#     instance_type: "{{ instance_type }}"
-#     image: "{{ instance_image }}"
-#     vpc_subnet_id: "{{ allother_subnet_id }}"
-#     region: "{{ aws_region }}"
-#     instance_tags: '{"Name":"{{ postgres_instance_tag }}","Type":"{{ postgres_instance_tag }}","Environment":"{{ instance_env }}"}'
-#     assign_public_ip: yes
-#     wait: true
-#     count: 1
-#     volumes: 
-#     - device_name: /dev/sda1
-#       device_type: "{{ instance_storage }}"
-#       volume_size: "{{ instance_vol_size }}"
-#       delete_on_termination: true
-#   user_data: "{{ lookup('template', 'roles/instances/templates/postgres.yml.j2') }}"
-#   register: postgres_instance
-#
-# - add_host: name={{ item.public_ip }} >
-#             groups={{postgres_instance_tag}},{{instance_env}}
-#             ec2_region={{aws_region}} 
-#             ec2_tag_Name={{postgres_instance_tag}}
-#             ec2_tag_Type={{postgres_instance_tag}}
-#             ec2_tag_Environment={{instance_env}}
-#             ec2_ip_address={{item.public_ip}}
-#   with_items: "{{ postgres_instance.instances }}"
-#
-# - name: check ssh on postgres vm
-#   wait_for: host={{item.public_ip}} port=22 delay=15 timeout=320 state=started
-#   with_items: "{{ postgres_instance.instances }}"
+ - name: Provision Postgres VM
+   local_action:
+     module: ec2
+     aws_access_key:   "{{ aws_access_key }}"
+     aws_secret_key:   "{{ aws_secret_key }}"
+     key_name: "{{ aws_ssh_key_name }}"
+     group_id: "['{{ postgres_sec_group }}', '{{ zabbix_sec_group }}', '{{ mgmt_sec_group }}']"
+     instance_type: "{{ instance_type }}"
+     image: "{{ instance_image }}"
+     vpc_subnet_id: "{{ allother_subnet_id }}"
+     region: "{{ aws_region }}"
+     instance_tags: '{"Name":"{{ postgres_instance_tag }}","Type":"{{ postgres_instance_tag }}","Environment":"{{ instance_env }}"}'
+     assign_public_ip: yes
+     wait: true
+     count: 1
+     volumes: 
+     - device_name: /dev/sda1
+       device_type: "{{ instance_storage }}"
+       volume_size: "{{ instance_vol_size }}"
+       delete_on_termination: true
+     user_data: "{{ lookup('template', 'roles/instances/templates/postgres.yml.j2') }}"
+   register: postgres_instance
+
+ - add_host: name={{ item.public_ip }} >
+             groups={{postgres_instance_tag}},{{instance_env}}
+             ec2_region={{aws_region}} 
+             ec2_tag_Name={{postgres_instance_tag}}
+             ec2_tag_Type={{postgres_instance_tag}}
+             ec2_tag_Environment={{instance_env}}
+             ec2_ip_address={{item.public_ip}}
+   with_items: "{{ postgres_instance.instances }}"
+
+ - name: check ssh on postgres vm
+   wait_for: host={{item.public_ip}} port=22 delay=15 timeout=320 state=started
+   with_items: "{{ postgres_instance.instances }}"
 
  - name: Provision Zabbix VM
    local_action:
@@ -56,7 +56,7 @@
        device_type: "{{ instance_storage }}"
        volume_size: "{{ instance_vol_size }}"
        delete_on_termination: true
-   user_data: "{{ lookup('template', 'roles/instances/templates/zabbix.yml.j2') }}"
+     user_data: "{{ lookup('template', 'roles/instances/templates/zabbix.yml.j2') }}"
    register: zabbix_instance
 
  - add_host: name={{ item.public_ip }} >
@@ -69,105 +69,106 @@
    with_items: "{{ zabbix_instance.instances }}"
 
  - name: Wait for the instances to boot by checking the ssh port
-   wait_for: host={{item.public_ip}} port=22 delay=60 timeout=320 state=started
+   wait_for: host={{item.public_ip}} port=22 delay=15 timeout=320 state=started
    with_items: "{{ zabbix_instance.instances }}"
 
-# - name: Provision Rundeck VM
-#   local_action:
-#     module: ec2
-#     aws_access_key:   "{{ aws_access_key }}"
-#     aws_secret_key:   "{{ aws_secret_key }}"
-#     key_name: "{{ aws_ssh_key_name }}"
-#     group_id: "['{{ zabbix_sec_group }}', '{{ mgmt_sec_group }}']"
-#     instance_type: "{{ instance_type }}"
-#     image: "{{ instance_image }}"
-#     vpc_subnet_id: "{{ allother_subnet_id }}"
-#     region: "{{ aws_region }}"
-#     instance_tags: '{"Name":"{{ rundeck_instance_tag }}","Type":"{{ rundeck_instance_tag }}","Environment":"{{ instance_env }}"}'
-#     assign_public_ip: yes
-#     wait: true
-#     count: 1
-#     volumes: 
-#     - device_name: /dev/sda1
-#       device_type: "{{ instance_storage }}"
-#       volume_size: "{{ instance_vol_size }}"
-#       delete_on_termination: true
-#     user_data: "{{ lookup('template', 'roles/instances/templates/rundeck.yml.j2') }}"
-#
-#   register: rundeck_instance
-#
-# - add_host: 
-#     name= "{{ item.public_ip }}"
-#     hostname= "{{ rundeck_instance_tag }}"
-#     groups= "{{ rundeck_instance_tag }}", "{{ instance_env }}"
-#   with_items: "{{ rundeck_instance.instances }}"
-#
-# - name: Wait for the instances to boot by checking the ssh port
-#   wait_for: host={{item.public_ip}} port=22 delay=15 timeout=320 state=started
-#   with_items: "{{ rundeck_instance.instances }}"
-#
-# - name: Provision Graylog VM
-#   local_action:
-#     module: ec2
-#     aws_access_key:   "{{ aws_access_key }}"
-#     aws_secret_key:   "{{ aws_secret_key }}"
-#     key_name: "{{ aws_ssh_key_name }}"
-#     group_id: "['{{ zabbix_sec_group }}', '{{ mgmt_sec_group }}']"
-#     instance_type: "{{ instance_type }}"
-#     image: "{{ instance_image }}"
-#     vpc_subnet_id: "{{ allother_subnet_id }}"
-#     region: "{{ aws_region }}"
-#     instance_tags: '{"Name":"{{ graylog_instance_tag }}","Type":"{{ graylog_instance_tag }}","Environment":"{{ instance_env }}"}'
-#     assign_public_ip: yes
-#     wait: true
-#     count: 1
-#     volumes: 
-#     - device_name: /dev/sda1
-#       device_type: "{{ instance_storage }}"
-#       volume_size: "{{ instance_vol_size }}"
-#       delete_on_termination: true
-#   register: graylog_instance
-#
-# - add_host: 
-#     name= "{{ item.public_ip }}"
-#     hostname= "{{ graylog_instance_tag }}"
-#     groups= "{{ graylog_instance_tag }}", "{{ instance_env }}"
-#   with_items: "{{ graylog_instance.instances }}"
-#
-# - name: Wait for the instances to boot by checking the ssh port
-#   wait_for: host={{item.public_ip}} port=22 delay=60 timeout=320 state=started
-#   with_items: "{{ graylog_instance.instances }}"
-#
-# - name: Provision Rancher VM
-#   local_action:
-#     module: ec2
-#     aws_access_key:   "{{ aws_access_key }}"
-#     aws_secret_key:   "{{ aws_secret_key }}"
-#     key_name: "{{ aws_ssh_key_name }}"
-#     group_id: "['{{ zabbix_sec_group }}', '{{ mgmt_sec_group }}']"
-#     instance_type: "{{ instance_type }}"
-#     image: "{{ instance_image }}"
-#     vpc_subnet_id: "{{ appserver_subnet_id }}"
-#     region: "{{ aws_region }}"
-#     instance_tags: '{"Name":"{{ appserver_instance_tag }}","Type":"{{ appserver_instance_tag }}","Environment":"{{ instance_env }}"}'
-#     assign_public_ip: yes
-#     wait: true
-#     count: 1
-#     volumes: 
-#     - device_name: /dev/sda1
-#       device_type: "{{ instance_storage }}"
-#       volume_size: "{{ instance_vol_size }}"
-#       delete_on_termination: true
-#   register: appserver_instance
-#
-# - add_host: 
-#     name= "{{ item.public_ip }}"
-#     hostname= "{{ appserver_instance_tag }}"
-#     groups= "{{ appserver_instance_tag }}", "{{ instance_env }}"
-#   with_items: "{{ appserver_instance.instances }}"
-#
-# - name: Wait for the instances to boot by checking the ssh port
-#   wait_for: host={{item.public_ip}} port=22 delay=60 timeout=320 state=started
-#   with_items: "{{ appserver_instance.instances }}"
-#
-#
+ - name: Provision Rundeck VM
+   local_action:
+     module: ec2
+     aws_access_key:   "{{ aws_access_key }}"
+     aws_secret_key:   "{{ aws_secret_key }}"
+     key_name: "{{ aws_ssh_key_name }}"
+     group_id: "['{{ zabbix_sec_group }}', '{{ mgmt_sec_group }}']"
+     instance_type: "{{ instance_type }}"
+     image: "{{ instance_image }}"
+     vpc_subnet_id: "{{ allother_subnet_id }}"
+     region: "{{ aws_region }}"
+     instance_tags: '{"Name":"{{ rundeck_instance_tag }}","Type":"{{ rundeck_instance_tag }}","Environment":"{{ instance_env }}"}'
+     assign_public_ip: yes
+     wait: true
+     count: 1
+     volumes: 
+     - device_name: /dev/sda1
+       device_type: "{{ instance_storage }}"
+       volume_size: "{{ instance_vol_size }}"
+       delete_on_termination: true
+     user_data: "{{ lookup('template', 'roles/instances/templates/rundeck.yml.j2') }}"
+   register: rundeck_instance
+
+ - add_host: 
+     name= "{{ item.public_ip }}"
+     hostname= "{{ rundeck_instance_tag }}"
+     groups= "{{ rundeck_instance_tag }}", "{{ instance_env }}"
+   with_items: "{{ rundeck_instance.instances }}"
+
+ - name: Wait for the instances to boot by checking the ssh port
+   wait_for: host={{item.public_ip}} port=22 delay=15 timeout=320 state=started
+   with_items: "{{ rundeck_instance.instances }}"
+
+ - name: Provision Graylog VM
+   local_action:
+     module: ec2
+     aws_access_key:   "{{ aws_access_key }}"
+     aws_secret_key:   "{{ aws_secret_key }}"
+     key_name: "{{ aws_ssh_key_name }}"
+     group_id: "['{{ zabbix_sec_group }}', '{{ mgmt_sec_group }}']"
+     instance_type: "{{ instance_type }}"
+     image: "{{ instance_image }}"
+     vpc_subnet_id: "{{ allother_subnet_id }}"
+     region: "{{ aws_region }}"
+     instance_tags: '{"Name":"{{ graylog_instance_tag }}","Type":"{{ graylog_instance_tag }}","Environment":"{{ instance_env }}"}'
+     assign_public_ip: yes
+     wait: true
+     count: 1
+     volumes: 
+     - device_name: /dev/sda1
+       device_type: "{{ instance_storage }}"
+       volume_size: "{{ instance_vol_size }}"
+       delete_on_termination: true
+     user_data: "{{ lookup('template', 'roles/instances/templates/graylog.yml.j2') }}"
+   register: graylog_instance
+
+ - add_host: 
+     name= "{{ item.public_ip }}"
+     hostname= "{{ graylog_instance_tag }}"
+     groups= "{{ graylog_instance_tag }}", "{{ instance_env }}"
+   with_items: "{{ graylog_instance.instances }}"
+
+ - name: Wait for the instances to boot by checking the ssh port
+   wait_for: host={{item.public_ip}} port=22 delay=15 timeout=320 state=started
+   with_items: "{{ graylog_instance.instances }}"
+
+ - name: Provision Rancher VM
+   local_action:
+     module: ec2
+     aws_access_key:   "{{ aws_access_key }}"
+     aws_secret_key:   "{{ aws_secret_key }}"
+     key_name: "{{ aws_ssh_key_name }}"
+     group_id: "['{{ zabbix_sec_group }}', '{{ mgmt_sec_group }}']"
+     instance_type: "{{ instance_type }}"
+     image: "{{ instance_image }}"
+     vpc_subnet_id: "{{ appserver_subnet_id }}"
+     region: "{{ aws_region }}"
+     instance_tags: '{"Name":"{{ appserver_instance_tag }}","Type":"{{ appserver_instance_tag }}","Environment":"{{ instance_env }}"}'
+     assign_public_ip: yes
+     wait: true
+     count: 1
+     volumes: 
+     - device_name: /dev/sda1
+       device_type: "{{ instance_storage }}"
+       volume_size: "{{ instance_vol_size }}"
+       delete_on_termination: true
+     user_data: "{{ lookup('template', 'roles/instances/templates/appserver.yml.j2') }}"
+   register: appserver_instance
+
+ - add_host: 
+     name= "{{ item.public_ip }}"
+     hostname= "{{ appserver_instance_tag }}"
+     groups= "{{ appserver_instance_tag }}", "{{ instance_env }}"
+   with_items: "{{ appserver_instance.instances }}"
+
+ - name: Wait for the instances to boot by checking the ssh port
+   wait_for: host={{item.public_ip}} port=22 delay=15 timeout=320 state=started
+   with_items: "{{ appserver_instance.instances }}"
+
+
