@@ -16,9 +16,12 @@
         cidr_ip:      "{{subnet_1_cidr }}"
   register:           sec_group_postgres
 
+- name: print stuff
+  debug: var=sec_group_postgres
+
 - name:               set postgres security group fact
   set_fact:
-    postgres_sec_group: "{{ sec_group_postgres.group.id }}"
+    postgres_sec_group: "{{ sec_group_postgres.group_id }}"
 
 - name:               Create Zabbix Security Group
   ec2_group:
@@ -38,7 +41,7 @@
 
 - name:               set zabbix security group fact
   set_fact:
-    zabbix_sec_group: "{{ sec_group_zabbix.group.id }}"
+    zabbix_sec_group: "{{ sec_group_zabbix.group_id }}"
 
 - name:               Create Mgmt Security Group
   ec2_group:
@@ -57,5 +60,5 @@
 
 - name:               set mgmt security group fact
   set_fact:
-    mgmt_sec_group: "{{ sec_group_mgmt.group.id }}"
+    mgmt_sec_group: "{{ sec_group_mgmt.group_id }}"
 

@@ -1,5 +1,6 @@
 
 ---
+ansible_ssh_private_key_file: /home/mark/.ssh/id_rsa
 
 # AWS Credentials
 aws_access_key: "snip"
@@ -42,3 +43,16 @@ postgres_instance_tag: "postgres"
 postgres_db_name: "blah"
 postgres_db_user: "blah"
 postgres_db_password: "blah"
+
+#zabbix
+zabbix_instance_tag: "zabbix"
+
+#rundeck
+rundeck_instance_tag: "rundeck"
+
+#graylog
+graylog_instance_tag: "graylog"
+
+#appserver
+appserver_instance_tag: "appserver"
+

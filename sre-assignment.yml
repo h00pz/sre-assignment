@@ -1,5 +1,5 @@
 ---
- - hosts: localhost
+ - hosts: all
    connection: local
    pre_tasks:
     - include_vars: vars.yml
@@ -7,3 +7,4 @@
     - vpc
     - security_groups
     - ssh_keys
+    - instances
