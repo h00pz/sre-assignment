@@ -1,0 +1,19 @@
+
+---
+
+# check facts for VPC name we use
+- name: get VPC topology info 
+  ec2_vpc_net_facts:
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    filters:
+      "tag:Name": SRE VPC
+  register: vpc_data
+
+- name:  iprint mesg
+  debug: var=vpc_data
+
+- name: blahblah
+  debug: "VPC doesnt exist"
+  when: vpc_data is undefined
