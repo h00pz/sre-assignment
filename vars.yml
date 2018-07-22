@@ -25,3 +25,7 @@ igw_tag:        "SRE IGW"
 
 #Routing Table
 route_tale_tag: "Public"
+
+#ssh key
+aws_ssh_key_name: "sre-keys"
+aws_ssh_key_material: "snip"
