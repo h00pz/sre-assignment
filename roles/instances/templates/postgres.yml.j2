@@ -5,9 +5,3 @@ package_upgrade: true
 packages:
  - postgresql
  - postgresql-contrib
-
-
-runcmd:
- - 'wget -P /tmp http://dl.bintray.com/rundeck/rundeck-deb/rundeck_2.11.5-1-GA_all.deb'
- - 'sudo dpkg -i /tmp/rundeck_2.11.5-1-GA_all.deb'
- - 'sudo reboot'
