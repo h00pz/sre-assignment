@@ -1,0 +1,10 @@
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+cluster.name: graylog
+node.name: graylog-1
+node.master: true
+node.data: true
+bootstrap.memory_lock: false
+network.host: 0.0.0.0
+http.port: 9200
+EOF2
