@@ -21,7 +21,7 @@ subnet_2_cidr:  "172.31.254.0/24"
 subnet_2_tag:   "AllOther"
 
 #Internet Gateway
-igw_tag:        "SRE IGW"
+igw_tag: "SRE IGW"
 
 #Routing Table
 route_tale_tag: "Public"
@@ -29,3 +29,16 @@ route_tale_tag: "Public"
 #ssh key
 aws_ssh_key_name: "sre-keys"
 aws_ssh_key_material: "snip"
+
+#aws instances
+instance_type: "t2.micro"
+instance_image: "ami-731c2016"
+instance_storage: "gp2"
+instance_vol_size: "8"
+instance_env: "test"
+
+#postgres
+postgres_instance_tag: "postgres"
+postgres_db_name: "blah"
+postgres_db_user: "blah"
+postgres_db_password: "blah"

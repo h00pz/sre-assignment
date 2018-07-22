@@ -1,17 +1,6 @@
 
 ---
 
-# check facts for VPC name we use
-- ec2_vpc_net_facts:
-    region:           "{{ aws_region }}"
-    aws_access_key:   "{{ aws_access_key }}"                                                
-    aws_secret_key:   "{{ aws_secret_key }}"
-    filters:
-      "tag:Name": SRE VPN
-  register: vpc_exists
-
-#- debug: var=vpc_exists.data
-
 #creating the VPC.
 - name:               Create VPC
   ec2_vpc_net:
@@ -21,14 +10,12 @@
     aws_access_key:   "{{ aws_access_key }}"
     aws_secret_key:   "{{ aws_secret_key }}"
     state:            "present"
-  register: my_vpc
-#  when: vpc_exists is undefined
+  register:           my_vpc
 
 #save the id of the VPC in a new variable.
 - name:               Set VPC ID in variable
   set_fact:
     vpc_id:           "{{ my_vpc.vpc.id }}"
-#  when: vpc_exists is undefined
 
 #check if appserver subnet is created
 - ec2_vpc_subnet_facts:
@@ -36,8 +23,7 @@
     aws_access_key:   "{{ aws_access_key }}"
     aws_secret_key:   "{{ aws_secret_key }}"
     filters:
-      "tag:Name": AppServer
-  register: appserver_subnet_exists
+      "tag:Name":      AppServer
 
 #creating the AppServer Subnet in the VPC.
 - name:               Create Public Subnet
@@ -51,23 +37,12 @@
     aws_secret_key:   "{{ aws_secret_key }}"
     resource_tags:
       Name:           "{{ subnet_1_tag }}"
-  register: appserver_subnet
-#  when: appserver_subnet_exists is undefined
+  register:           appserver_subnet
 
 #save the id of the Public Subnet in a new variable.
 - name:               Set Public Subnet ID in variable
   set_fact:
     appserver_subnet_id: "{{ appserver_subnet.subnet.id }}"
-#  when: appserver_subnet_exists is undefined
-
-#check if allother subnet is created
-- ec2_vpc_subnet_facts:
-    region:           "{{ aws_region }}"
-    aws_access_key:   "{{ aws_access_key }}"
-    aws_secret_key:   "{{ aws_secret_key }}"
-    filters:
-      "tag:Name": AllOther
-  register: allother_subnet_exists
 
 #creating the AllOther subnet in the VPC.
 - name:               Create Public Subnet
@@ -81,23 +56,12 @@
     aws_secret_key:   "{{ aws_secret_key }}"
     resource_tags:
       Name:           "{{ subnet_2_tag }}"
-  register: allother_subnet
-#  when: allother_subnet_exists is undefined
+  register:           allother_subnet
 
 #save the id of the Public Subnet in a new variable.
 - name:               Set Public Subnet ID in variable
   set_fact:
     allother_subnet_id: "{{ allother_subnet.subnet.id }}"
-#  when: allother_subnet_exists is undefined
-
-#check if IGW is created
-- ec2_vpc_igw_facts:
-    region:           "{{ aws_region }}"
-    aws_access_key:   "{{ aws_access_key }}"
-    aws_secret_key:   "{{ aws_secret_key }}"
-    filters:
-      "tag:Name": SRE IGW
-  register: igw_exists
 
 #setup Internet Gateway.
 - name:               Create Internet Gateway for VPC
@@ -107,23 +71,12 @@
     aws_access_key:   "{{ aws_access_key }}"
     aws_secret_key:   "{{ aws_secret_key }}"
     state:            "present"
-  register: my_vpc_igw
-#  when: igw_exists is undefined
+  register:           my_vpc_igw
 
 #save the id of the Internet Gateway in a new variable.
 - name:               Set Internet Gateway ID in variable
   set_fact:
     igw_id:           "{{ my_vpc_igw.gateway_id }}"
-#  when: igw_exists is undefined
-
-#check if route table is setup
-- ec2_vpc_route_table_facts:
-    region:           "{{ aws_region }}"
-    aws_access_key:   "{{ aws_access_key }}"
-    aws_secret_key:   "{{ aws_secret_key }}"
-    filters:
-      "tag:Name": Public
-  register: route_table_exists
 
 #set up a route table. 
 - name:               Set up public subnet route table
@@ -140,4 +93,3 @@
     routes:
       - dest:         "0.0.0.0/0"
         gateway_id:   "{{ igw_id }}"
-#  when: route_table_exists is undefined

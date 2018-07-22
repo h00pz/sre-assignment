@@ -14,6 +14,11 @@
         ports:
         - 5432
         cidr_ip:      "{{subnet_1_cidr }}"
+  register:           sec_group_postgres
+
+- name:               set postgres security group fact
+  set_fact:
+    postgres_sec_group: "{{ sec_group_postgres.group.id }}"
 
 - name:               Create Zabbix Security Group
   ec2_group:
@@ -29,6 +34,11 @@
         - 10050
         - 10051
         cidr_ip:      "{{subnet_1_cidr }}"
+  register:           sec_group_zabbix
+
+- name:               set zabbix security group fact
+  set_fact:
+    zabbix_sec_group: "{{ sec_group_zabbix.group.id }}"
 
 - name:               Create Mgmt Security Group
   ec2_group:
@@ -43,3 +53,9 @@
         ports:
         - 22
         cidr_ip:      "{{my_ip}}/32"
+  register:           sec_group_mgmt
+
+- name:               set mgmt security group fact
+  set_fact:
+    mgmt_sec_group: "{{ sec_group_mgmt.group.id }}"
+

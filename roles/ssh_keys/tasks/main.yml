@@ -1,0 +1,11 @@
+
+---
+
+- name: create key pair
+  ec2_key:
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    name:             "{{ aws_ssh_key_name }}"
+    key_material:     '{{ aws_ssh_key_material }}'
+    force:            false
