@@ -4,9 +4,15 @@ package_upgrade: true
 
 packages:
  - openjdk-8-jdk
+ - apt-transport-https
+ - ca-certificates
+ - curl
+ - software-properties-common
 
 
 runcmd:
- - 'wget -P /tmp http://dl.bintray.com/rundeck/rundeck-deb/rundeck_2.11.5-1-GA_all.deb'
- - 'sudo dpkg -i /tmp/rundeck_2.11.5-1-GA_all.deb'
- - 'sudo reboot'
+ - 'curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -'
+ - 'sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"'
+ - 'sudo apt-get update'
+ - 'sudo apt-get install docker-ce'
+ - 'sudo docker run -d --restart=unless-stopped -p 8080:8080 rancher/server'

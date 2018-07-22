@@ -3,7 +3,7 @@ package_update: true
 package_upgrade: true
 
 runcmd:
- - 'wget -P /tmp https://github.com/h00pzz/sre-assignment/blob/master/roles/instances/files/zabbix-install.sh'
+ - 'wget -P /tmp https://raw.githubusercontent.com/h00pzz/sre-assignment/master/roles/instances/files/zabbix-install.sh'
  - 'sudo chmod +x /tmp/zabbix-install.sh'
  - 'sudo /tmp/zabbix-install.sh'
 
