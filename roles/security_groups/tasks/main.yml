@@ -58,6 +58,9 @@
         - 80
         - 443
         - 4440
+        - 8080
+        - 9200
+        - 5432
         cidr_ip:      "{{my_ip}}/32"
   register:           sec_group_mgmt
 
