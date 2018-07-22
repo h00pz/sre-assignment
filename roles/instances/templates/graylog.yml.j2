@@ -15,6 +15,7 @@ runcmd:
  - 'wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -'
  - 'echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-5.x.list'
  - 'sudo apt-get update && sudo apt-get install elasticsearch'
+ - 'sudo wget -P /etc/elasticsearch/ https://raw.githubusercontent.com/h00pzz/sre-assignment/master/roles/instances/files/elasticsearch.yml'
  - 'systemctl daemon-reload'
  - 'systemctl enable elasticsearch.service'
  - 'systemctl start elasticsearch.service'
